@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiteScan 프로토타입</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto+Sans+KR', sans-serif;
+        }
+        .step { display: none; }
+        .step.active { display: block; }
+        .symptom-btn.selected {
+            background-color: #e0f2fe;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .accordion-content { display: none; }
+        .accordion-header.active + .accordion-content { display: block; }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="header bg-gradient-to-r from-blue-600 to-blue-500 text-white p-5 text-center">
+            <h1 class="text-2xl font-bold">BiteScan (여행벌레닥터)</h1>
+        </div>
+        
+        <div class="content p-6 md:p-8">
+
+            <!-- Step 1: Home -->
+            <div id="step1" class="step active">
+                <h2 class="text-xl font-bold text-slate-800 mb-3">여행 중 벌레에 물리셨나요?</h2>
+                <p class="text-slate-600 mb-6">사진 한 장으로 지금 바로 확인하고 대처하세요. AI 분석, 응급처치, 약국 가이드부터 호텔 룸 변경 요청까지 도와드립니다.</p>
+                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="showStep(2)">지금 바로 분석 시작하기</button>
+            </div>
+
+            <!-- Step 2: Upload (Updated) -->
+            <div id="step2" class="step">
+                <h2 class="text-xl font-bold text-slate-800 mb-3">Step 1. 사진 업로드</h2>
+                <p class="text-slate-600 mb-6">상처 부위나 발견한 벌레 사진을 올려주세요.</p>
+                
+                <input type="file" id="imageUpload" accept="image/*" capture="environment" class="hidden">
+                <label for="imageUpload" class="w-full text-center block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                    카메라 촬영 / 앨범에서 선택
+                </label>
+
+                <div class="mt-4 border border-dashed border-slate-300 rounded-lg p-4 min-h-[200px] flex justify-center items-center">
+                    <img id="imagePreview" class="hidden max-w-full max-h-48 rounded-md" src="#" alt="Image preview" />
+                    <span id="previewText" class="text-slate-400">사진을 등록해주세요.</span>
+                </div>
+                
+                <button id="nextToSymptomsBtn" class="w-full bg-slate-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-600 transition-colors mt-4 hidden" onclick="showStep(3)">다음 단계로</button>
+            </div>
+
+            <!-- Step 3: Symptoms -->
+            <div id="step3" class="step">
+                <h2 class="text-xl font-bold text-slate-800 mb-3">Step 2. 증상 선택</h2>
+                <p class="text-slate-600 mb-6">현재 느끼는 증상을 모두 선택해주세요.</p>
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">가려움</div>
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">통증</div>
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">붓기</div>
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">물집</div>
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">열감</div>
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">없음</div>
+                </div>
+                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="startAnalysis()">분석 결과 보기</button>
+            </div>
+            
+            <!-- Step 4: Loading -->
+            <div id="step4" class="step">
+                <div class="text-center py-10">
+                    <div class="spinner w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full mx-auto mb-4"></div>
+                    <p class="text-slate-600">AI가 상처와 증상을<br>분석하고 있습니다...</p>
+                </div>
+            </div>
+
+            <!-- Step 5: Results -->
+            <div id="step5" class="step">
+                <h2 class="text-xl font-bold text-slate-800 mb-4">AI 종합 분석 결과</h2>
+                <div id="result-summary" class="mb-4"></div>
+                <div class="space-y-3">
+                    <!-- Accordion Items will be the same as before -->
+                     <div class="accordion-item border border-slate-200 rounded-lg">
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <span>응급처치 가이드</span><span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">
+                            <p>1. 흐르는 깨끗한 물과 비누로 상처 부위를 씻어주세요.</p>
+                            <p>2. 깨끗한 수건으로 감싼 얼음으로 10분간 냉찜질을 하세요.</p>
+                            <p>3. 가렵더라도 절대 긁지 마세요. 2차 감염의 원인이 됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-slate-200 rounded-lg">
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <span>호텔 대처 가이드</span><span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">
+                            <h4 class="font-bold mb-2">상황 설명 및 방역 요청</h4>
+                            <pre id="script1" class="bg-slate-100 p-3 rounded-md text-sm whitespace-pre-wrap">Hello, I believe I was bitten by a bug in my room (Room #____). Could you please send someone to inspect and disinfect the room immediately?</pre>
+                            <button class="bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-md mt-2 hover:bg-green-700" onclick="copyScript('script1')">스크립트 복사</button>
+                            <h4 class="font-bold mt-4 mb-2">룸 변경 요청</h4>
+                            <pre id="script2" class="bg-slate-100 p-3 rounded-md text-sm whitespace-pre-wrap">I was bitten by a bug in my room and I have a photo of the bite. For my safety and hygiene, I would like to request a room change immediately. Could you please arrange a new room for me?</pre>
+                            <button class="bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-md mt-2 hover:bg-green-700" onclick="copyScript('script2')">스크립트 복사</button>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-slate-200 rounded-lg">
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <span>약국/병원 방문 가이드</span><span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">
+                             <p><b>- 연고:</b> <span class="text-blue-600 font-mono">Hydrocortisone 1% cream</span></p>
+                             <p><b>- 알레르기 약:</b> <span class="text-blue-600 font-mono">Loratadine or Cetirizine</span></p>
+                             <div class="mt-6 pt-4 border-t border-slate-200">
+                                <h4 class="font-bold mb-2">내 주변 의료시설 찾기</h4>
+                                <div class="flex space-x-3">
+                                    <a href="https://www.google.com/maps/search/?api=1&query=pharmacy+near+me" target="_blank" class="flex-1 text-center bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 no-underline">주변 약국 찾기 🏥</a>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=hospital+near+me" target="_blank" class="flex-1 text-center bg-rose-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-rose-600 no-underline">주변 병원 찾기 🚑</a>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                 <button class="w-full bg-slate-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-600 mt-6" onclick="showStep(1)">처음으로 돌아가기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const steps = document.querySelectorAll('.step');
+
+        function showStep(stepNumber) {
+            steps.forEach(step => step.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            currentStep = stepNumber;
+        }
+
+        // --- New code for image upload ---
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewText = document.getElementById('previewText');
+        const nextToSymptomsBtn = document.getElementById('nextToSymptomsBtn');
+
+        imageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    previewText.classList.add('hidden');
+                    nextToSymptomsBtn.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        // --- End of new code ---
+
+        function toggleSymptom(element) {
+            element.classList.toggle('selected');
+        }
+
+        function startAnalysis() {
+            showStep(4);
+            const imageData = imagePreview.src; // Get image data for API
+            
+            // --- This function simulates a call to a real AI API ---
+            simulateApiCall(imageData).then(result => {
+                generateResults(result);
+            });
+        }
+
+        async function simulateApiCall(imageData) {
+            console.log("Sending image data to AI API...", imageData.substring(0, 50) + "...");
+            
+            // --- 실제 API 호출이 들어갈 부분 ---
+            // 예시: const response = await fetch('https://api.diagnose.com/v1/analyze', {
+            //   method: 'POST',
+            //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY' },
+            //   body: JSON.stringify({ image: imageData })
+            // });
+            // const result = await response.json();
+            // return result;
+            // --- 여기까지가 실제 API 호출 예시입니다 ---
+
+            // For this prototype, we'll just wait 2.5 seconds and return a random result.
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const scenarios = [
+                        { riskClass: 'bg-yellow-100 border-yellow-500 text-yellow-800', riskText: '주의: 증상 관찰 및 대처 필요', insect: '빈대 (Bed Bug)', summary: '심각한 질병을 옮기진 않지만, 심한 가려움증과 알레르기 반응을 유발할 수 있습니다. 추가 피해 방지를 위해 호텔 측에 즉시 알리고 룸 변경을 요청하세요.'},
+                        { riskClass: 'bg-red-100 border-red-500 text-red-800', riskText: '위험: 가까운 병원 방문 권장', insect: '독성이 의심되는 거미', summary: '상처 부위의 통증이 심하고 붓기가 빠르게 퍼지고 있습니다. 정확한 진단과 치료를 위해 즉시 가까운 병원을 방문하세요.'}
+                    ];
+                    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                    resolve(randomScenario);
+                }, 2500);
+            });
+        }
+
+        function generateResults(result) {
+            const resultSummary = document.getElementById('result-summary');
+            resultSummary.innerHTML = `
+                <div class="result-card border-l-4 p-4 rounded-r-lg ${result.riskClass}">
+                    <h3 class="font-bold mb-1">${result.riskText}</h3>
+                    <p class="text-sm"><strong>AI 추정 벌레: ${result.insect}</strong></p>
+                </div>
+                <p class="text-slate-600 mt-4">${result.summary}</p>
+                <p class="text-xs text-slate-400 mt-4">※ 이 분석은 의학적 진단이 아니며, 응급처치 및 대처를 돕기 위한 AI 추정치입니다.</p>
+            `;
+            showStep(5);
+        }
+
+        function toggleAccordion(header) {
+            header.classList.toggle('active');
+            const icon = header.querySelector('span:last-child');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function copyScript(scriptId) {
+            const textToCopy = document.getElementById(scriptId).innerText;
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('스크립트가 복사되었습니다!');
+            } catch (err) { console.error('Fallback: Oops, unable to copy', err); }
+            document.body.removeChild(textArea);
+        }
+        
+        showStep(1);
+    </script>
+</body>
+</html>
