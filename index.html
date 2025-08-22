@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BiteScan 프로토타입</title>
+    <title>MUSIMUSI 프로토타입</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -13,9 +13,9 @@
         .step { display: none; }
         .step.active { display: block; }
         .symptom-btn.selected {
-            background-color: #e0f2fe;
-            border-color: #3b82f6;
-            color: #3b82f6;
+            background-color: #eef0ff;
+            border-color: #4154FF;
+            color: #4154FF;
         }
         .accordion-content { display: none; }
         .accordion-header.active + .accordion-content { display: block; }
@@ -29,8 +29,8 @@
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
         <!-- Header -->
-        <div class="header bg-gradient-to-r from-blue-600 to-blue-500 text-white p-5 text-center">
-            <h1 class="text-2xl font-bold">BiteScan (여행벌레닥터)</h1>
+        <div class="header bg-[#4154FF] text-white p-5 text-center">
+            <h1 class="text-2xl font-bold">MUSIMUSI</h1>
         </div>
         
         <div class="content p-6 md:p-8">
@@ -39,7 +39,7 @@
             <div id="step1" class="step active">
                 <h2 class="text-xl font-bold text-slate-800 mb-3">여행 중 벌레에 물리셨나요?</h2>
                 <p class="text-slate-600 mb-6">사진 한 장으로 지금 바로 확인하고 대처하세요. AI 분석, 응급처치, 약국 가이드부터 호텔 룸 변경 요청까지 도와드립니다.</p>
-                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="showStep(2)">지금 바로 분석 시작하기</button>
+                <button class="w-full bg-[#4154FF] text-white font-bold py-3 px-4 rounded-lg transition-all hover:brightness-95" onclick="showStep(2)">지금 바로 분석 시작하기</button>
             </div>
 
             <!-- Step 2: Upload (Updated) -->
@@ -48,7 +48,7 @@
                 <p class="text-slate-600 mb-6">상처 부위나 발견한 벌레 사진을 올려주세요.</p>
                 
                 <input type="file" id="imageUpload" accept="image/*" capture="environment" class="hidden">
-                <label for="imageUpload" class="w-full text-center block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                <label for="imageUpload" class="w-full text-center block bg-[#4154FF] text-white font-bold py-3 px-4 rounded-lg transition-all hover:brightness-95 cursor-pointer">
                     카메라 촬영 / 앨범에서 선택
                 </label>
 
@@ -72,13 +72,13 @@
                     <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">열감</div>
                     <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">없음</div>
                 </div>
-                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="startAnalysis()">분석 결과 보기</button>
+                <button class="w-full bg-[#4154FF] text-white font-bold py-3 px-4 rounded-lg transition-all hover:brightness-95" onclick="startAnalysis()">분석 결과 보기</button>
             </div>
             
             <!-- Step 4: Loading -->
             <div id="step4" class="step">
                 <div class="text-center py-10">
-                    <div class="spinner w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full mx-auto mb-4"></div>
+                    <div class="spinner w-12 h-12 border-4 border-slate-200 border-t-[#4154FF] rounded-full mx-auto mb-4"></div>
                     <p class="text-slate-600">AI가 상처와 증상을<br>분석하고 있습니다...</p>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 <h2 class="text-xl font-bold text-slate-800 mb-4">AI 종합 분석 결과</h2>
                 <div id="result-summary" class="mb-4"></div>
                 <div class="space-y-3">
-                    <!-- Accordion Items will be the same as before -->
+                    <!-- Accordion Items -->
                      <div class="accordion-item border border-slate-200 rounded-lg">
                         <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">
                             <span>응급처치 가이드</span><span class="transform transition-transform duration-300">▼</span>
@@ -117,8 +117,8 @@
                             <span>약국/병원 방문 가이드</span><span class="transform transition-transform duration-300">▼</span>
                         </div>
                         <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">
-                             <p><b>- 연고:</b> <span class="text-blue-600 font-mono">Hydrocortisone 1% cream</span></p>
-                             <p><b>- 알레르기 약:</b> <span class="text-blue-600 font-mono">Loratadine or Cetirizine</span></p>
+                             <p><b>- 연고:</b> <span class="text-[#4154FF] font-mono">Hydrocortisone 1% cream</span></p>
+                             <p><b>- 알레르기 약:</b> <span class="text-[#4154FF] font-mono">Loratadine or Cetirizine</span></p>
                              <div class="mt-6 pt-4 border-t border-slate-200">
                                 <h4 class="font-bold mb-2">내 주변 의료시설 찾기</h4>
                                 <div class="flex space-x-3">
@@ -144,7 +144,6 @@
             currentStep = stepNumber;
         }
 
-        // --- New code for image upload ---
         const imageUpload = document.getElementById('imageUpload');
         const imagePreview = document.getElementById('imagePreview');
         const previewText = document.getElementById('previewText');
@@ -163,7 +162,6 @@
                 reader.readAsDataURL(file);
             }
         });
-        // --- End of new code ---
 
         function toggleSymptom(element) {
             element.classList.toggle('selected');
@@ -171,9 +169,8 @@
 
         function startAnalysis() {
             showStep(4);
-            const imageData = imagePreview.src; // Get image data for API
+            const imageData = imagePreview.src;
             
-            // --- This function simulates a call to a real AI API ---
             simulateApiCall(imageData).then(result => {
                 generateResults(result);
             });
@@ -182,17 +179,6 @@
         async function simulateApiCall(imageData) {
             console.log("Sending image data to AI API...", imageData.substring(0, 50) + "...");
             
-            // --- 실제 API 호출이 들어갈 부분 ---
-            // 예시: const response = await fetch('https://api.diagnose.com/v1/analyze', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY' },
-            //   body: JSON.stringify({ image: imageData })
-            // });
-            // const result = await response.json();
-            // return result;
-            // --- 여기까지가 실제 API 호출 예시입니다 ---
-
-            // For this prototype, we'll just wait 2.5 seconds and return a random result.
             return new Promise(resolve => {
                 setTimeout(() => {
                     const scenarios = [
