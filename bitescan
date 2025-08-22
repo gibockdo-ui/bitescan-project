@@ -1,0 +1,251 @@
+{\rtf1\ansi\ansicpg949\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="ko">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>BiteScan \uc0\u54532 \u47196 \u53664 \u53440 \u51077 </title>\
+    <script src="https://cdn.tailwindcss.com"></script>\
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">\
+    <style>\
+        body \{\
+            font-family: 'Noto+Sans+KR', sans-serif;\
+        \}\
+        .step \{ display: none; \}\
+        .step.active \{ display: block; \}\
+        .symptom-btn.selected \{\
+            background-color: #e0f2fe;\
+            border-color: #3b82f6;\
+            color: #3b82f6;\
+        \}\
+        .accordion-content \{ display: none; \}\
+        .accordion-header.active + .accordion-content \{ display: block; \}\
+        .spinner \{ animation: spin 1s linear infinite; \}\
+        @keyframes spin \{\
+            0% \{ transform: rotate(0deg); \}\
+            100% \{ transform: rotate(360deg); \}\
+        \}\
+    </style>\
+</head>\
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">\
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">\
+        <!-- Header -->\
+        <div class="header bg-gradient-to-r from-blue-600 to-blue-500 text-white p-5 text-center">\
+            <h1 class="text-2xl font-bold">BiteScan (\uc0\u50668 \u54665 \u48268 \u47112 \u45797 \u53552 )</h1>\
+        </div>\
+        \
+        <div class="content p-6 md:p-8">\
+\
+            <!-- Step 1: Home -->\
+            <div id="step1" class="step active">\
+                <h2 class="text-xl font-bold text-slate-800 mb-3">\uc0\u50668 \u54665  \u51473  \u48268 \u47112 \u50640  \u47932 \u47532 \u49512 \u45208 \u50836 ?</h2>\
+                <p class="text-slate-600 mb-6">\uc0\u49324 \u51652  \u54620  \u51109 \u51004 \u47196  \u51648 \u44552  \u48148 \u47196  \u54869 \u51064 \u54616 \u44256  \u45824 \u52376 \u54616 \u49464 \u50836 . AI \u48516 \u49437 , \u51025 \u44553 \u52376 \u52824 , \u50557 \u44397  \u44032 \u51060 \u46300 \u48512 \u53552  \u54840 \u53588  \u47352  \u48320 \u44221  \u50836 \u52397 \u44620 \u51648  \u46020 \u50752 \u46300 \u47549 \u45768 \u45796 .</p>\
+                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="showStep(2)">\uc0\u51648 \u44552  \u48148 \u47196  \u48516 \u49437  \u49884 \u51089 \u54616 \u44592 </button>\
+            </div>\
+\
+            <!-- Step 2: Upload (Updated) -->\
+            <div id="step2" class="step">\
+                <h2 class="text-xl font-bold text-slate-800 mb-3">Step 1. \uc0\u49324 \u51652  \u50629 \u47196 \u46300 </h2>\
+                <p class="text-slate-600 mb-6">\uc0\u49345 \u52376  \u48512 \u50948 \u45208  \u48156 \u44204 \u54620  \u48268 \u47112  \u49324 \u51652 \u51012  \u50732 \u47140 \u51452 \u49464 \u50836 .</p>\
+                \
+                <input type="file" id="imageUpload" accept="image/*" capture="environment" class="hidden">\
+                <label for="imageUpload" class="w-full text-center block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">\
+                    \uc0\u52852 \u47700 \u46972  \u52524 \u50689  / \u50536 \u48276 \u50640 \u49436  \u49440 \u53469 \
+                </label>\
+\
+                <div class="mt-4 border border-dashed border-slate-300 rounded-lg p-4 min-h-[200px] flex justify-center items-center">\
+                    <img id="imagePreview" class="hidden max-w-full max-h-48 rounded-md" src="#" alt="Image preview" />\
+                    <span id="previewText" class="text-slate-400">\uc0\u49324 \u51652 \u51012  \u46321 \u47197 \u54644 \u51452 \u49464 \u50836 .</span>\
+                </div>\
+                \
+                <button id="nextToSymptomsBtn" class="w-full bg-slate-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-600 transition-colors mt-4 hidden" onclick="showStep(3)">\uc0\u45796 \u51020  \u45800 \u44228 \u47196 </button>\
+            </div>\
+\
+            <!-- Step 3: Symptoms -->\
+            <div id="step3" class="step">\
+                <h2 class="text-xl font-bold text-slate-800 mb-3">Step 2. \uc0\u51613 \u49345  \u49440 \u53469 </h2>\
+                <p class="text-slate-600 mb-6">\uc0\u54788 \u51116  \u45712 \u45180 \u45716  \u51613 \u49345 \u51012  \u47784 \u46160  \u49440 \u53469 \u54644 \u51452 \u49464 \u50836 .</p>\
+                <div class="grid grid-cols-2 gap-3 mb-6">\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u44032 \u47140 \u50880 </div>\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u53685 \u51613 </div>\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u48531 \u44592 </div>\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u47932 \u51665 </div>\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u50676 \u44048 </div>\
+                    <div class="symptom-btn border border-slate-300 rounded-lg p-3 text-center cursor-pointer" onclick="toggleSymptom(this)">\uc0\u50630 \u51020 </div>\
+                </div>\
+                <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors" onclick="startAnalysis()">\uc0\u48516 \u49437  \u44208 \u44284  \u48372 \u44592 </button>\
+            </div>\
+            \
+            <!-- Step 4: Loading -->\
+            <div id="step4" class="step">\
+                <div class="text-center py-10">\
+                    <div class="spinner w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full mx-auto mb-4"></div>\
+                    <p class="text-slate-600">AI\uc0\u44032  \u49345 \u52376 \u50752  \u51613 \u49345 \u51012 <br>\u48516 \u49437 \u54616 \u44256  \u51080 \u49845 \u45768 \u45796 ...</p>\
+                </div>\
+            </div>\
+\
+            <!-- Step 5: Results -->\
+            <div id="step5" class="step">\
+                <h2 class="text-xl font-bold text-slate-800 mb-4">AI \uc0\u51333 \u54633  \u48516 \u49437  \u44208 \u44284 </h2>\
+                <div id="result-summary" class="mb-4"></div>\
+                <div class="space-y-3">\
+                    <!-- Accordion Items will be the same as before -->\
+                     <div class="accordion-item border border-slate-200 rounded-lg">\
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">\
+                            <span>\uc0\u51025 \u44553 \u52376 \u52824  \u44032 \u51060 \u46300 </span><span class="transform transition-transform duration-300">\u9660 </span>\
+                        </div>\
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">\
+                            <p>1. \uc0\u55120 \u47476 \u45716  \u44648 \u45143 \u54620  \u47932 \u44284  \u48708 \u45572 \u47196  \u49345 \u52376  \u48512 \u50948 \u47484  \u50491 \u50612 \u51452 \u49464 \u50836 .</p>\
+                            <p>2. \uc0\u44648 \u45143 \u54620  \u49688 \u44148 \u51004 \u47196  \u44048 \u49916  \u50620 \u51020 \u51004 \u47196  10\u48516 \u44036  \u45257 \u52252 \u51656 \u51012  \u54616 \u49464 \u50836 .</p>\
+                            <p>3. \uc0\u44032 \u47157 \u45908 \u46972 \u46020  \u51208 \u45824  \u44545 \u51648  \u47560 \u49464 \u50836 . 2\u52264  \u44048 \u50684 \u51032  \u50896 \u51064 \u51060  \u46121 \u45768 \u45796 .</p>\
+                        </div>\
+                    </div>\
+                    <div class="accordion-item border border-slate-200 rounded-lg">\
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">\
+                            <span>\uc0\u54840 \u53588  \u45824 \u52376  \u44032 \u51060 \u46300 </span><span class="transform transition-transform duration-300">\u9660 </span>\
+                        </div>\
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">\
+                            <h4 class="font-bold mb-2">\uc0\u49345 \u54889  \u49444 \u47749  \u48143  \u48169 \u50669  \u50836 \u52397 </h4>\
+                            <pre id="script1" class="bg-slate-100 p-3 rounded-md text-sm whitespace-pre-wrap">Hello, I believe I was bitten by a bug in my room (Room #____). Could you please send someone to inspect and disinfect the room immediately?</pre>\
+                            <button class="bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-md mt-2 hover:bg-green-700" onclick="copyScript('script1')">\uc0\u49828 \u53356 \u47549 \u53944  \u48373 \u49324 </button>\
+                            <h4 class="font-bold mt-4 mb-2">\uc0\u47352  \u48320 \u44221  \u50836 \u52397 </h4>\
+                            <pre id="script2" class="bg-slate-100 p-3 rounded-md text-sm whitespace-pre-wrap">I was bitten by a bug in my room and I have a photo of the bite. For my safety and hygiene, I would like to request a room change immediately. Could you please arrange a new room for me?</pre>\
+                            <button class="bg-green-600 text-white text-xs font-bold py-1 px-3 rounded-md mt-2 hover:bg-green-700" onclick="copyScript('script2')">\uc0\u49828 \u53356 \u47549 \u53944  \u48373 \u49324 </button>\
+                        </div>\
+                    </div>\
+                    <div class="accordion-item border border-slate-200 rounded-lg">\
+                        <div class="accordion-header p-4 cursor-pointer font-semibold flex justify-between items-center" onclick="toggleAccordion(this)">\
+                            <span>\uc0\u50557 \u44397 /\u48337 \u50896  \u48169 \u47928  \u44032 \u51060 \u46300 </span><span class="transform transition-transform duration-300">\u9660 </span>\
+                        </div>\
+                        <div class="accordion-content p-4 border-t border-slate-200 text-slate-600">\
+                             <p><b>- \uc0\u50672 \u44256 :</b> <span class="text-blue-600 font-mono">Hydrocortisone 1% cream</span></p>\
+                             <p><b>- \uc0\u50508 \u47112 \u47476 \u44592  \u50557 :</b> <span class="text-blue-600 font-mono">Loratadine or Cetirizine</span></p>\
+                             <div class="mt-6 pt-4 border-t border-slate-200">\
+                                <h4 class="font-bold mb-2">\uc0\u45236  \u51452 \u48320  \u51032 \u47308 \u49884 \u49444  \u52286 \u44592 </h4>\
+                                <div class="flex space-x-3">\
+                                    <a href="https://www.google.com/maps/search/?api=1&query=pharmacy+near+me" target="_blank" class="flex-1 text-center bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 no-underline">\uc0\u51452 \u48320  \u50557 \u44397  \u52286 \u44592  \u55356 \u57317 </a>\
+                                    <a href="https://www.google.com/maps/search/?api=1&query=hospital+near+me" target="_blank" class="flex-1 text-center bg-rose-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-rose-600 no-underline">\uc0\u51452 \u48320  \u48337 \u50896  \u52286 \u44592  \u55357 \u56977 </a>\
+                                </div>\
+                             </div>\
+                        </div>\
+                    </div>\
+                </div>\
+                 <button class="w-full bg-slate-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-600 mt-6" onclick="showStep(1)">\uc0\u52376 \u51020 \u51004 \u47196  \u46028 \u50500 \u44032 \u44592 </button>\
+            </div>\
+        </div>\
+    </div>\
+\
+    <script>\
+        let currentStep = 1;\
+        const steps = document.querySelectorAll('.step');\
+\
+        function showStep(stepNumber) \{\
+            steps.forEach(step => step.classList.remove('active'));\
+            document.getElementById(`step$\{stepNumber\}`).classList.add('active');\
+            currentStep = stepNumber;\
+        \}\
+\
+        // --- New code for image upload ---\
+        const imageUpload = document.getElementById('imageUpload');\
+        const imagePreview = document.getElementById('imagePreview');\
+        const previewText = document.getElementById('previewText');\
+        const nextToSymptomsBtn = document.getElementById('nextToSymptomsBtn');\
+\
+        imageUpload.addEventListener('change', function(event) \{\
+            const file = event.target.files[0];\
+            if (file) \{\
+                const reader = new FileReader();\
+                reader.onload = function(e) \{\
+                    imagePreview.src = e.target.result;\
+                    imagePreview.classList.remove('hidden');\
+                    previewText.classList.add('hidden');\
+                    nextToSymptomsBtn.classList.remove('hidden');\
+                \}\
+                reader.readAsDataURL(file);\
+            \}\
+        \});\
+        // --- End of new code ---\
+\
+        function toggleSymptom(element) \{\
+            element.classList.toggle('selected');\
+        \}\
+\
+        function startAnalysis() \{\
+            showStep(4);\
+            const imageData = imagePreview.src; // Get image data for API\
+            \
+            // --- This function simulates a call to a real AI API ---\
+            simulateApiCall(imageData).then(result => \{\
+                generateResults(result);\
+            \});\
+        \}\
+\
+        async function simulateApiCall(imageData) \{\
+            console.log("Sending image data to AI API...", imageData.substring(0, 50) + "...");\
+            \
+            // --- \uc0\u49892 \u51228  API \u54840 \u52636 \u51060  \u46308 \u50612 \u44040  \u48512 \u48516  ---\
+            // \uc0\u50696 \u49884 : const response = await fetch('https://api.diagnose.com/v1/analyze', \{\
+            //   method: 'POST',\
+            //   headers: \{ 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_API_KEY' \},\
+            //   body: JSON.stringify(\{ image: imageData \})\
+            // \});\
+            // const result = await response.json();\
+            // return result;\
+            // --- \uc0\u50668 \u44592 \u44620 \u51648 \u44032  \u49892 \u51228  API \u54840 \u52636  \u50696 \u49884 \u51077 \u45768 \u45796  ---\
+\
+            // For this prototype, we'll just wait 2.5 seconds and return a random result.\
+            return new Promise(resolve => \{\
+                setTimeout(() => \{\
+                    const scenarios = [\
+                        \{ riskClass: 'bg-yellow-100 border-yellow-500 text-yellow-800', riskText: '\uc0\u51452 \u51032 : \u51613 \u49345  \u44288 \u52272  \u48143  \u45824 \u52376  \u54596 \u50836 ', insect: '\u48712 \u45824  (Bed Bug)', summary: '\u49900 \u44033 \u54620  \u51656 \u48337 \u51012  \u50734 \u44592 \u51652  \u50506 \u51648 \u47564 , \u49900 \u54620  \u44032 \u47140 \u50880 \u51613 \u44284  \u50508 \u47112 \u47476 \u44592  \u48152 \u51025 \u51012  \u50976 \u48156 \u54624  \u49688  \u51080 \u49845 \u45768 \u45796 . \u52628 \u44032  \u54588 \u54644  \u48169 \u51648 \u47484  \u50948 \u54644  \u54840 \u53588  \u52769 \u50640  \u51593 \u49884  \u50508 \u47532 \u44256  \u47352  \u48320 \u44221 \u51012  \u50836 \u52397 \u54616 \u49464 \u50836 .'\},\
+                        \{ riskClass: 'bg-red-100 border-red-500 text-red-800', riskText: '\uc0\u50948 \u54744 : \u44032 \u44620 \u50868  \u48337 \u50896  \u48169 \u47928  \u44428 \u51109 ', insect: '\u46021 \u49457 \u51060  \u51032 \u49900 \u46104 \u45716  \u44144 \u48120 ', summary: '\u49345 \u52376  \u48512 \u50948 \u51032  \u53685 \u51613 \u51060  \u49900 \u54616 \u44256  \u48531 \u44592 \u44032  \u48736 \u47476 \u44172  \u54140 \u51648 \u44256  \u51080 \u49845 \u45768 \u45796 . \u51221 \u54869 \u54620  \u51652 \u45800 \u44284  \u52824 \u47308 \u47484  \u50948 \u54644  \u51593 \u49884  \u44032 \u44620 \u50868  \u48337 \u50896 \u51012  \u48169 \u47928 \u54616 \u49464 \u50836 .'\}\
+                    ];\
+                    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];\
+                    resolve(randomScenario);\
+                \}, 2500);\
+            \});\
+        \}\
+\
+        function generateResults(result) \{\
+            const resultSummary = document.getElementById('result-summary');\
+            resultSummary.innerHTML = `\
+                <div class="result-card border-l-4 p-4 rounded-r-lg $\{result.riskClass\}">\
+                    <h3 class="font-bold mb-1">$\{result.riskText\}</h3>\
+                    <p class="text-sm"><strong>AI \uc0\u52628 \u51221  \u48268 \u47112 : $\{result.insect\}</strong></p>\
+                </div>\
+                <p class="text-slate-600 mt-4">$\{result.summary\}</p>\
+                <p class="text-xs text-slate-400 mt-4">\uc0\u8251  \u51060  \u48516 \u49437 \u51008  \u51032 \u54617 \u51201  \u51652 \u45800 \u51060  \u50500 \u45768 \u47728 , \u51025 \u44553 \u52376 \u52824  \u48143  \u45824 \u52376 \u47484  \u46037 \u44592  \u50948 \u54620  AI \u52628 \u51221 \u52824 \u51077 \u45768 \u45796 .</p>\
+            `;\
+            showStep(5);\
+        \}\
+\
+        function toggleAccordion(header) \{\
+            header.classList.toggle('active');\
+            const icon = header.querySelector('span:last-child');\
+            icon.classList.toggle('rotate-180');\
+        \}\
+\
+        function copyScript(scriptId) \{\
+            const textToCopy = document.getElementById(scriptId).innerText;\
+            const textArea = document.createElement('textarea');\
+            textArea.value = textToCopy;\
+            document.body.appendChild(textArea);\
+            textArea.select();\
+            try \{\
+                document.execCommand('copy');\
+                alert('\uc0\u49828 \u53356 \u47549 \u53944 \u44032  \u48373 \u49324 \u46104 \u50632 \u49845 \u45768 \u45796 !');\
+            \} catch (err) \{ console.error('Fallback: Oops, unable to copy', err); \}\
+            document.body.removeChild(textArea);\
+        \}\
+        \
+        showStep(1);\
+    </script>\
+</body>\
+</html>\
+}
