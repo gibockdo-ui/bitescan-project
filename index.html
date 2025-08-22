@@ -42,7 +42,7 @@
                 <button class="w-full bg-[#4154FF] text-white font-bold py-3 px-4 rounded-lg transition-all hover:brightness-95" onclick="showStep(2)">지금 바로 분석 시작하기</button>
             </div>
 
-            <!-- Step 2: Upload (Updated) -->
+            <!-- Step 2: Upload -->
             <div id="step2" class="step">
                 <h2 class="text-xl font-bold text-slate-800 mb-3">Step 1. 사진 업로드</h2>
                 <p class="text-slate-600 mb-6">상처 부위나 발견한 벌레 사진을 올려주세요.</p>
@@ -171,26 +171,87 @@
             showStep(4);
             const imageData = imagePreview.src;
             
-            simulateApiCall(imageData).then(result => {
-                generateResults(result);
-            });
+            // 시뮬레이션 함수 대신 실제 Roboflow API 호출 함수로 변경
+            callRoboflowApi(imageData)
+                .then(apiResult => {
+                    generateResultsFromApi(apiResult);
+                })
+                .catch(error => {
+                    console.error("API Error:", error);
+                    // 에러 발생 시 사용자에게 알림
+                    const errorResult = {
+                        riskClass: 'bg-gray-200 border-gray-500 text-gray-800',
+                        riskText: '분석 실패',
+                        insect: '알 수 없음',
+                        summary: 'AI 분석 중 오류가 발생했습니다. 네트워크 연결을 확인하거나 다른 사진으로 다시 시도해주세요.'
+                    };
+                    generateResults(errorResult);
+                });
         }
 
-        async function simulateApiCall(imageData) {
-            console.log("Sending image data to AI API...", imageData.substring(0, 50) + "...");
+        // --- Roboflow API 호출을 위한 실제 함수 ---
+        async function callRoboflowApi(imageData) {
+            // 🚨 중요: 이 API 키는 Roboflow에서 발급받은 본인의 키로 교체해야 합니다.
+            // 🚨 보안 경고: 이 키를 HTML에 직접 노출하는 것은 매우 위험합니다.
+            // 실제 서비스에서는 서버를 통해 안전하게 호출해야 합니다.
+            const API_KEY = "YOUR_ROBOFLOW_API_KEY"; // ⬅️ 여기에 자신의 Roboflow API 키를 입력하세요.
+            const MODEL_ENDPOINT = "insect-bites/1"; // Roboflow 모델 정보
+
+            // Base64 데이터에서 순수한 이미지 데이터 부분만 추출
+            const base64Image = imageData.split(',')[1];
+
+            console.log("Roboflow API로 실제 분석을 요청합니다...");
+
+            const response = await fetch(
+                `https://detect.roboflow.com/${MODEL_ENDPOINT}?api_key=${API_KEY}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: base64Image
+                }
+            );
             
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const scenarios = [
-                        { riskClass: 'bg-yellow-100 border-yellow-500 text-yellow-800', riskText: '주의: 증상 관찰 및 대처 필요', insect: '빈대 (Bed Bug)', summary: '심각한 질병을 옮기진 않지만, 심한 가려움증과 알레르기 반응을 유발할 수 있습니다. 추가 피해 방지를 위해 호텔 측에 즉시 알리고 룸 변경을 요청하세요.'},
-                        { riskClass: 'bg-red-100 border-red-500 text-red-800', riskText: '위험: 가까운 병원 방문 권장', insect: '독성이 의심되는 거미', summary: '상처 부위의 통증이 심하고 붓기가 빠르게 퍼지고 있습니다. 정확한 진단과 치료를 위해 즉시 가까운 병원을 방문하세요.'}
-                    ];
-                    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-                    resolve(randomScenario);
-                }, 2500);
-            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("API 분석 결과:", result);
+            return result;
         }
 
+        // --- API 결과를 바탕으로 사용자에게 보여줄 내용을 가공하는 함수 ---
+        function generateResultsFromApi(apiResult) {
+            // API가 분석 결과를 주지 않았거나, 아무것도 찾지 못한 경우
+            if (!apiResult || !apiResult.predictions || apiResult.predictions.length === 0) {
+                const noResult = {
+                    riskClass: 'bg-gray-200 border-gray-500 text-gray-800',
+                    riskText: '판독 불가',
+                    insect: '알 수 없음',
+                    summary: '사진에서 벌레나 상처를 인식하지 못했습니다. 더 선명하거나 다른 각도의 사진으로 다시 시도해주세요.'
+                };
+                generateResults(noResult);
+                return;
+            }
+
+            // 가장 확률이 높은 예측 결과 하나를 사용
+            const prediction = apiResult.predictions[0];
+            const insectClass = prediction.class; // 예: "Bed-Bug", "Mosquito-bite"
+
+            // API 결과(영어)를 사용자 친화적인 한국어 정보로 변환
+            const resultMapping = {
+                'Bed-Bug': { riskClass: 'bg-yellow-100 border-yellow-500 text-yellow-800', riskText: '주의: 증상 관찰 및 대처 필요', insect: '빈대 (Bed Bug)', summary: '심각한 질병을 옮기진 않지만, 심한 가려움증과 알레르기 반응을 유발할 수 있습니다. 추가 피해 방지를 위해 호텔 측에 즉시 알리고 룸 변경을 요청하세요.'},
+                'Mosquito-bite': { riskClass: 'bg-green-100 border-green-500 text-green-800', riskText: '안전: 자가 처치 가능', insect: '모기 (Mosquito)', summary: '일반적인 모기 물림으로 보입니다. 가렵더라도 긁지 말고, 냉찜질이나 약국 연고를 사용하세요.'},
+                // 여기에 Roboflow 모델이 인식하는 다른 벌레 종류들을 추가할 수 있습니다.
+                'default': { riskClass: 'bg-red-100 border-red-500 text-red-800', riskText: '위험: 가까운 병원 방문 권장', insect: `알 수 없는 벌레 (${insectClass})`, summary: '알려지지 않은 벌레이거나 독성이 의심됩니다. 정확한 진단을 위해 가까운 병원을 방문하는 것을 권장합니다.'}
+            };
+
+            const finalResult = resultMapping[insectClass] || resultMapping['default'];
+            generateResults(finalResult);
+        }
+
+        // --- 최종 결과를 화면에 그려주는 함수 ---
         function generateResults(result) {
             const resultSummary = document.getElementById('result-summary');
             resultSummary.innerHTML = `
